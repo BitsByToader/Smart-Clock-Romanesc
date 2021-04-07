@@ -1,0 +1,13 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>qtquickcontrols2.conf</file>
+        <file>main.cpp</file>
+        <file>qml.qrc</file>
+        <file>SmartClock.pro</file>
+        <file>icons/back.png</file>
+        <file>icons/drawer.png</file>
+        <file>icons/forward.png</file>
+        <file>icons/menu.png</file>
+    </qresource>
+</RCC>
