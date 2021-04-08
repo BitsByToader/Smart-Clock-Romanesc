@@ -9,5 +9,7 @@
         <file>icons/drawer.png</file>
         <file>icons/forward.png</file>
         <file>icons/menu.png</file>
+        <file>MainView.qml</file>
+        <file>AlarmsView.qml</file>
     </qresource>
 </RCC>

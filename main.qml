@@ -5,35 +5,25 @@ import QtQuick.Controls.Material 2.15
 
 ApplicationWindow {
     id: window
-    width: 800
-    height: 480
+
+    //Set a minimum and maxium height/width to make the window nonresizable
+    minimumHeight: 480
+    maximumHeight: 480
+
+    minimumWidth: 800
+    maximumWidth: 800
+
     visible: true
-    title: qsTr("SmartClock")
+    title: qsTr("Smart Clock")
 
     SwipeView {
         id: swipeView
         anchors.fill: parent
         currentIndex: swipeIndicator.currentIndex
 
-        Pane {
-            Text {
-                id: wow
-                text: qsTr("sup bitch")
+        MainView {}
 
-                color: "#ffffff"
-                font.bold: true
-            }
-        }
-
-        Pane {
-            Text {
-                id: wowagain
-                text: qsTr("who's that biitch?")
-
-                color: "#ffffff";
-                font.bold: true
-            }
-        }
+        AlarmsView {}
     }
 
     PageIndicator {
@@ -49,10 +39,9 @@ ApplicationWindow {
 
     Button {
         id: backButton
-//        opacity: modulesList.currentIndex == 0 ? 0 : 1
         icon.name: "back"
         icon.source: "icons/back.png"
-        background: transparent //dirty trick to bug out QML and to remove the background
+        background: transparent
 
         anchors.verticalCenter: parent.verticalCenter
 
@@ -83,7 +72,7 @@ ApplicationWindow {
         id: forwardButton
         icon.name: "back"
         icon.source: "icons/forward.png"
-        background: transparent //dirty trick to bug out QML and to remove the background
+        background: transparent
 
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: parent.right
