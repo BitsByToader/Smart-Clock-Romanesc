@@ -10,18 +10,21 @@ Pane {
         id: alarmsModel
 
         ListElement {
-            name: "Alarma"
-            time: "7am"
+            name: "Copilu'"
+            time: "06:30"
+            days: "Lu Ma Mi Jo Vi Sa Du"
             activated: false
         }
         ListElement {
-            name: "Te drecu'"
-            time: "3am"
+            name: "Pastile"
+            time: "14:45"
+            days: "Lu Ma Mi Jo Vi Sa Du"
             activated: true
         }
         ListElement {
-            name: "Scoala vietii"
-            time: "never fraere"
+            name: "Munca"
+            time: "09:00"
+            days: "Lu Ma Mi Jo Vi"
             activated: true
         }
     }
@@ -70,49 +73,6 @@ Pane {
 
         model: alarmsModel
 
-        delegate: Item {
-            id: wrapper
-
-            width: alarmsList.width
-            height: 55
-
-            Label {
-                id: alarmName
-                text: name
-
-                anchors.left: wrapper.left
-                anchors.top: wrapper.top
-                anchors.leftMargin: 25
-            }
-
-            Label {
-                text: time
-
-                anchors.left: wrapper.left
-                anchors.top: alarmName.bottom
-
-                anchors.topMargin: 10
-                anchors.leftMargin: 25
-            }
-
-            Switch {
-                checkable: true
-                checked: activated
-
-                Material.accent: Material.Blue
-
-                anchors.right: wrapper.right
-                anchors.verticalCenter: wrapper.verticalCenter
-
-            }
-
-            MenuSeparator {
-                width: wrapper.width - 25
-
-                anchors.bottom: wrapper.bottom
-                anchors.right: wrapper.right
-                anchors.topMargin: 5
-            }
-        }
+        delegate: AlarmListDelegate {}
     }
 }
