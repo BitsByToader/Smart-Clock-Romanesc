@@ -2,9 +2,15 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.VirtualKeyboard 2.15
 import QtQuick.Controls.Material 2.15
+//Leave this commented to use the Qt Dialog
+//Uncomment the line bellow to use the system wide dialog, which it is buggy in macOS
+//import QtQuick.Dialogs 1.3
 
 Pane {
     id: alarmsViewPane
+    property var isAddAlarmDialogVisible: false
+
+    Material.accent: Material.Blue
 
     ListModel {
         id: alarmsModel
@@ -59,6 +65,10 @@ Pane {
         anchors.top: parent.top
         anchors.right: parent.right
         anchors.rightMargin: 10
+
+        onClicked: {
+            isAddAlarmDialogVisible = true
+        }
     }
 
     ListView {
@@ -74,5 +84,23 @@ Pane {
         model: alarmsModel
 
         delegate: AlarmListDelegate {}
+    }
+
+    Dialog {
+        id: addAlarmDialog
+        visible: isAddAlarmDialogVisible
+        title: "Add an alarm"
+
+        anchors.centerIn: parent
+
+        onAccepted: {
+            console.log("Alarm added!")
+        }
+
+        onRejected: {
+            console.log("New alarm discarded")
+        }
+
+        AddAlarmDialogContent {}
     }
 }
