@@ -11,7 +11,7 @@ Item {
 
     Label {
         id: alarmName
-        text: name
+        text: modelData.alarmName
 
         font.pixelSize: 22
         font.bold: true
@@ -22,7 +22,7 @@ Item {
     }
 
     Label {
-        text: time
+        text: modelData.alarmHour + ":" + modelData.alarmMinutes
 
         font.pixelSize: 26
 
@@ -30,30 +30,47 @@ Item {
         anchors.verticalCenter: wrapper.verticalCenter
     }
 
-    Label {
-        text: days
-
-        font.pixelSize: 15
-        font.italic: true
-        color: Material.color(Material.Grey)
-
+    ListView {
         anchors.bottom: wrapper.bottom
         anchors.bottomMargin: 15
 
         anchors.left: wrapper.left
         anchors.leftMargin: 25
+
+        orientation: ListView.Horizontal
+
+        width: 100
+        height: 25
+
+        model: modelData.alarmDays
+
+        delegate: ItemDelegate {
+            text: "Hi"
+
+            font.pixelSize: 15
+            font.italic: true
+//            color: Material.color(Material.Grey)
+            height: parent.height
+            width: 30
+
+        }
     }
 
     Switch {
         id: alarmActivatedSwitch
 
         checkable: true
-        checked: activated
+        checked: modelData.alarmActivated
 
         Material.accent: Material.Blue
 
         anchors.right: wrapper.right
         anchors.verticalCenter: wrapper.verticalCenter
+
+        onClicked: {
+            console.log("Pressed switch for " + modelData.alarmName)
+            modelData.alarmActivated = !modelData.alarmActivated
+        }
 
     }
 

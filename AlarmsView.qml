@@ -5,6 +5,7 @@ import QtQuick.Controls.Material 2.15
 //Leave this commented to use the Qt Dialog
 //Uncomment the line bellow to use the system wide dialog, which it is buggy in macOS
 //import QtQuick.Dialogs 1.3
+import tudor.SmartClock 1.0
 
 Pane {
     id: alarmsViewPane
@@ -68,6 +69,24 @@ Pane {
 
         onClicked: {
             isAddAlarmDialogVisible = true
+
+            /*var indexToDelete = 1;
+            var myArray = []
+
+            for ( var i = 0; i < 3; i++ ) {
+                if ( SmartClock.alarms[i].alarmName !== SmartClock.alarms[indexToDelete].alarmName ) {
+                    myArray.push(SmartClock.alarms[i])
+                }
+            }
+
+            SmartClock.alarms = myArray*/
+
+            //This is how to delete something from the array^^^
+            //Because I only expose to QML a QList, the Js Engine doesn't know how to push, pop, splice etc on it
+            //Thus, I can't use any nice functions so I have to do some gymnastics like this by only reading from it and completely rewriting the list.
+            //However this can be easily bypassed by not manipulating the list from QML, only from C++, which is honestly more sane anyways.
+
+            SmartClock.test();
         }
     }
 
@@ -81,7 +100,7 @@ Pane {
         anchors.topMargin: 10
         anchors.left: parent.left
 
-        model: alarmsModel
+        model: SmartClock.alarms
 
         delegate: AlarmListDelegate {}
     }
