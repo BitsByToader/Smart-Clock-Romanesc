@@ -9,6 +9,7 @@ CONFIG += c++11
 
 SOURCES += \
         alarm.cpp \
+        alarms.cpp \
         main.cpp \
         smartclock.cpp
 
@@ -27,4 +28,5 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     alarm.h \
+    alarms.h \
     smartclock.h

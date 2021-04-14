@@ -85,8 +85,6 @@ Pane {
             //Because I only expose to QML a QList, the Js Engine doesn't know how to push, pop, splice etc on it
             //Thus, I can't use any nice functions so I have to do some gymnastics like this by only reading from it and completely rewriting the list.
             //However this can be easily bypassed by not manipulating the list from QML, only from C++, which is honestly more sane anyways.
-
-            SmartClock.test();
         }
     }
 
@@ -100,7 +98,7 @@ Pane {
         anchors.topMargin: 10
         anchors.left: parent.left
 
-        model: SmartClock.alarms
+        model: SmartClock.alarms.list
 
         delegate: AlarmListDelegate {}
     }

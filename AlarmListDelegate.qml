@@ -30,30 +30,18 @@ Item {
         anchors.verticalCenter: wrapper.verticalCenter
     }
 
-    ListView {
+    Label {
+        text: modelData.alarmDaysString
+
+        font.pixelSize: 15
+        font.italic: true
+        color: Material.color(Material.Grey)
+
         anchors.bottom: wrapper.bottom
         anchors.bottomMargin: 15
 
         anchors.left: wrapper.left
         anchors.leftMargin: 25
-
-        orientation: ListView.Horizontal
-
-        width: 100
-        height: 25
-
-        model: modelData.alarmDays
-
-        delegate: ItemDelegate {
-            text: "Hi"
-
-            font.pixelSize: 15
-            font.italic: true
-//            color: Material.color(Material.Grey)
-            height: parent.height
-            width: 30
-
-        }
     }
 
     Switch {

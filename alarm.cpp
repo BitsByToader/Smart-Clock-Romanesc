@@ -6,6 +6,7 @@ Alarm::Alarm(QString alarmName, int alarmHour, int alarmMinutes, QList<QString> 
     this->setAlarmMinutes(alarmMinutes);
     this->setAlarmDays(alarmDays);
     this->setAlarmActivated(alarmActivated);
+    this->setAlarmUUID(QUuid::createUuid().toString(QUuid::WithoutBraces));
 }
 
 void Alarm::setAlarmName(QString alarmName) {
@@ -38,14 +39,30 @@ void Alarm::setAlarmDays(QList<QString> alarmDays) {
 
     m_alarmDays = alarmDays;
     emit alarmDaysChanged(m_alarmDays);
+
+    QString string;
+    for ( int i = 0; i < alarmDays.count(); i++ ) {
+        string.append(alarmDays[i] + " ");
+    }
+    setAlarmDaysString(string);
+}
+
+void Alarm::setAlarmDaysString(QString alarmDaysString) {
+    if (m_alarmDaysString == alarmDaysString)
+        return;
+
+    m_alarmDaysString = alarmDaysString;
+    emit alarmDaysChanged(m_alarmDays);
 }
 
 void Alarm::setAlarmActivated(bool alarmActivated) {
-    qDebug()<<"Setting alarmActivated value to:"<<alarmActivated<<"of alarm with name:"<<this->alarmName();
-
     if (m_alarmActivated == alarmActivated)
         return;
 
     m_alarmActivated = alarmActivated;
     emit alarmActivatedChanged(m_alarmActivated);
+}
+
+void Alarm::setAlarmUUID(const QString &alarmUUID) {
+    m_alarmUUID = alarmUUID;
 }
