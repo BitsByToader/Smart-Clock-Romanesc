@@ -2,6 +2,8 @@
 #define ALARMS_H
 
 #include <QObject>
+#include <QtDebug>
+#include <QtSql>
 
 #include "alarm.h"
 
@@ -29,8 +31,8 @@ public:
 
 public slots:
     void setList(QList<Alarm*> list);
-    void addAlarm(QString alarmName, int alarmHour, int alarmMinutes, QList<QString> alarmDays, bool alarmActivated);
-    void updateAlarm(QString alarmUUID, QString alarmName = "default_alarm_name", int alarmHour = -1, int alarmMinutes = -1, QList<QString> alarmDays = {});
+    void addAlarm(QString alarmName, int alarmHour, int alarmMinutes, QString alarmDays, bool alarmActivated);
+    void updateAlarm(QString alarmUUID, QString alarmName, int alarmHour, int alarmMinutes, QString alarmDays, bool alarmActivated);
     void deleteAlarm(QString alarmUUID);
 
 signals:

@@ -2,6 +2,7 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.VirtualKeyboard 2.15
 import QtQuick.Controls.Material 2.15
+import tudor.SmartClock 1.0
 
 Item {
     id: wrapper
@@ -31,7 +32,7 @@ Item {
     }
 
     Label {
-        text: modelData.alarmDaysString
+        text: modelData.alarmDays !== "" ? modelData.alarmDays : "O singura data."
 
         font.pixelSize: 15
         font.italic: true
@@ -52,14 +53,55 @@ Item {
 
         Material.accent: Material.Blue
 
+        anchors.right: editAlarmButton.left
+        anchors.verticalCenter: wrapper.verticalCenter
+
+        onClicked: {
+            modelData.alarmActivated = !modelData.alarmActivated
+
+            SmartClock.alarms.updateAlarm(modelData.alarmUUID, modelData.alarmName, modelData.alarmHour, modelData.alarmMinutes, modelData.alarmDays, modelData.alarmActivated)
+        }
+
+    }
+
+    Button {
+        id: deleteAlarmButton
+
+        text: "Sterge"
+        Material.accent: Material.Red
+        highlighted: true
+        flat: true
+
         anchors.right: wrapper.right
         anchors.verticalCenter: wrapper.verticalCenter
 
         onClicked: {
-            console.log("Pressed switch for " + modelData.alarmName)
-            modelData.alarmActivated = !modelData.alarmActivated
+            SmartClock.alarms.deleteAlarm(modelData.alarmUUID)
         }
+    }
 
+    Button {
+        id: editAlarmButton
+
+        text: "Editeaza"
+        Material.accent: Material.Blue
+        highlighted: true
+        flat: true
+
+        anchors.right: deleteAlarmButton.left
+        anchors.verticalCenter: wrapper.verticalCenter
+
+        onClicked: {
+            alarmNameToUse = modelData.alarmName
+            alarmHourToUse = modelData.alarmHour
+            alarmMinutesToUse = modelData.alarmMinutes
+            alarmRepeatsToUse = (modelData.alarmDays !== "")
+            alarmDaysToUse = modelData.alarmDays.split(" ")
+            dialogWillEdit = true
+            alarmUUID = modelData.alarmUUID
+
+            isAddAlarmDialogVisible = true
+        }
     }
 
     MenuSeparator {

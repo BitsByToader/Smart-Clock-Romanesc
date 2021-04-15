@@ -1,5 +1,6 @@
 QT += quick
 QT += virtualkeyboard
+QT += sql
 
 CONFIG += c++11
 

@@ -2,6 +2,8 @@
 #define SMARTCLOCK_H
 
 #include <QObject>
+#include <QtSql>
+#include <QDebug>
 
 #include <alarms.h>
 

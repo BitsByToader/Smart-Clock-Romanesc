@@ -1,6 +1,9 @@
 #include "alarm.h"
 
-Alarm::Alarm(QString alarmName, int alarmHour, int alarmMinutes, QList<QString> alarmDays, bool alarmActivated, QObject *parent) : QObject(parent) {
+Alarm::Alarm(QObject *parent) {
+}
+
+Alarm::Alarm(QString alarmName, int alarmHour, int alarmMinutes, QString alarmDays, bool alarmActivated, QObject *parent) : QObject(parent) {
     this->setAlarmName(alarmName);
     this->setAlarmHour(alarmHour);
     this->setAlarmMinutes(alarmMinutes);
@@ -33,25 +36,11 @@ void Alarm::setAlarmMinutes(int alarmMinutes) {
     emit alarmMinutesChanged(m_alarmMinutes);
 }
 
-void Alarm::setAlarmDays(QList<QString> alarmDays) {
+void Alarm::setAlarmDays(QString alarmDays) {
     if (m_alarmDays == alarmDays)
         return;
 
     m_alarmDays = alarmDays;
-    emit alarmDaysChanged(m_alarmDays);
-
-    QString string;
-    for ( int i = 0; i < alarmDays.count(); i++ ) {
-        string.append(alarmDays[i] + " ");
-    }
-    setAlarmDaysString(string);
-}
-
-void Alarm::setAlarmDaysString(QString alarmDaysString) {
-    if (m_alarmDaysString == alarmDaysString)
-        return;
-
-    m_alarmDaysString = alarmDaysString;
     emit alarmDaysChanged(m_alarmDays);
 }
 

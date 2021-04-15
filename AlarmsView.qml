@@ -11,30 +11,15 @@ Pane {
     id: alarmsViewPane
     property var isAddAlarmDialogVisible: false
 
+    property var alarmNameToUse: ""
+    property var alarmHourToUse: 0
+    property var alarmMinutesToUse: 0
+    property var alarmRepeatsToUse: true
+    property var alarmDaysToUse: []
+    property var dialogWillEdit: false
+    property var alarmUUID: ""
+
     Material.accent: Material.Blue
-
-    ListModel {
-        id: alarmsModel
-
-        ListElement {
-            name: "Copilu'"
-            time: "06:30"
-            days: "Lu Ma Mi Jo Vi Sa Du"
-            activated: false
-        }
-        ListElement {
-            name: "Pastile"
-            time: "14:45"
-            days: "Lu Ma Mi Jo Vi Sa Du"
-            activated: true
-        }
-        ListElement {
-            name: "Munca"
-            time: "09:00"
-            days: "Lu Ma Mi Jo Vi"
-            activated: true
-        }
-    }
 
     Label {
         id: alarmsViewTitle
@@ -68,23 +53,15 @@ Pane {
         anchors.rightMargin: 10
 
         onClicked: {
+            alarmNameToUse = ""
+            alarmHourToUse = 0
+            alarmMinutesToUse = 0
+            alarmRepeatsToUse = true
+            alarmDaysToUse = []
+            alarmUUID = ""
+            dialogWillEdit = false
+
             isAddAlarmDialogVisible = true
-
-            /*var indexToDelete = 1;
-            var myArray = []
-
-            for ( var i = 0; i < 3; i++ ) {
-                if ( SmartClock.alarms[i].alarmName !== SmartClock.alarms[indexToDelete].alarmName ) {
-                    myArray.push(SmartClock.alarms[i])
-                }
-            }
-
-            SmartClock.alarms = myArray*/
-
-            //This is how to delete something from the array^^^
-            //Because I only expose to QML a QList, the Js Engine doesn't know how to push, pop, splice etc on it
-            //Thus, I can't use any nice functions so I have to do some gymnastics like this by only reading from it and completely rewriting the list.
-            //However this can be easily bypassed by not manipulating the list from QML, only from C++, which is honestly more sane anyways.
         }
     }
 
@@ -101,6 +78,10 @@ Pane {
         model: SmartClock.alarms.list
 
         delegate: AlarmListDelegate {}
+
+        add: Transition {
+            NumberAnimation { properties: "x,y"; from: 100; duration: 1000 }
+        }
     }
 
     Dialog {
@@ -109,14 +90,6 @@ Pane {
         title: "Add an alarm"
 
         anchors.centerIn: parent
-
-        onAccepted: {
-            console.log("Alarm added!")
-        }
-
-        onRejected: {
-            console.log("New alarm discarded")
-        }
 
         AddAlarmDialogContent {}
     }

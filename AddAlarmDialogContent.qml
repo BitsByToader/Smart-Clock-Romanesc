@@ -2,6 +2,7 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.VirtualKeyboard 2.15
 import QtQuick.Controls.Material 2.15
+import tudor.SmartClock 1.0
 
 Rectangle {
     color: "transparent"
@@ -27,6 +28,8 @@ Rectangle {
         autoScroll: true
         Material.accent: Material.Blue
 
+        text: alarmNameToUse
+
         anchors.left: alarmNameLabel.right
         anchors.leftMargin: 10
     }
@@ -45,13 +48,17 @@ Rectangle {
     ComboBox {
         id: alarmHourPicker
 
+        currentIndex: alarmHourToUse
+
         flat: true
         model: 25
         validator: IntValidator {
             bottom: 1;
             top: 24;
         }
+
         displayText: parseInt(parseInt(currentText) / 10) === 0 ? "0" + currentText : currentText
+        Material.accent: Material.Blue
 
         width: 70
 
@@ -75,13 +82,17 @@ Rectangle {
     ComboBox {
         id: alarmMinutesPicker
 
+        currentIndex: alarmMinutesToUse
+
         flat: true
         model: 61
         validator: IntValidator {
             bottom: 1;
             top: 60;
         }
+
         displayText: parseInt(parseInt(currentText) / 10) === 0 ? "0" + currentText : currentText
+        Material.accent: Material.Blue
 
         width: 70
 
@@ -105,7 +116,7 @@ Rectangle {
         id: alarmRepeatsSwitch
 
         checkable: true
-        checked: true
+        checked: alarmRepeatsToUse
         Material.accent: Material.Blue
 
         anchors.left: alarmRepeatsLabel.right
@@ -115,16 +126,40 @@ Rectangle {
     Label {
         id: alarmDaysLabel
 
+        visible: alarmRepeatsSwitch.checked
+
         text: "Days"
         font.italic: true
         font.pixelSize: 15
 
         anchors.left: parent.left
         anchors.verticalCenter: alarmDaysButtons.verticalCenter
+
+        states: [
+            State {
+                when: !alarmRepeatsSwitch.checked;
+                PropertyChanges { target: alarmDaysLabel; opacity: 0 }
+                PropertyChanges { target: alarmDaysButtons; opacity: 0 }
+            },
+            State {
+                when: alarmRepeatsSwitch.checked;
+                PropertyChanges { target: alarmDaysLabel; opacity: 1 }
+                PropertyChanges { target: alarmDaysButtons; opacity: 1 }
+            }
+        ]
+
+        transitions: Transition {
+            NumberAnimation {
+                property: "opacity"
+                duration: 250
+            }
+        }
     }
 
     ListView {
         id: alarmDaysButtons
+
+        visible: alarmRepeatsSwitch.checked
 
         width: 525
         height: 50
@@ -136,7 +171,7 @@ Rectangle {
             id: dayOfTheWeekCheckbox
             text: modelData
 
-            checked: true
+            checked: alarmDaysToUse.includes(modelData)
             Material.accent: Material.Blue
         }
 
@@ -157,7 +192,28 @@ Rectangle {
         anchors.bottom: parent.bottom
 
         onClicked: {
-            console.log("New alarm added.")
+            var alarmDaysString = ""
+
+            if ( alarmRepeatsSwitch.checked ) {
+                for ( var i = 0; i < alarmDaysButtons.children[0].children.length - 1; i++ ) {
+                    if ( alarmDaysButtons.children[0].children[i].checked ) {
+                        alarmDaysString += alarmDaysButtons.children[0].children[i].text
+
+                        if ( i !== alarmDaysButtons.children[0].children.length - 2 ) {
+                            alarmDaysString += " "
+                        }
+                    }
+                }
+                alarmDaysString.substring(0, alarmDaysString.length - 1);
+            }
+
+            if ( dialogWillEdit ) {
+                SmartClock.alarms.updateAlarm(alarmUUID, alarmNameField.text, alarmHourPicker.currentIndex, alarmMinutesPicker.currentIndex, alarmDaysString, true)
+                console.log("Alarm updated");
+            } else {
+                SmartClock.alarms.addAlarm(alarmNameField.text, alarmHourPicker.currentIndex, alarmMinutesPicker.currentIndex, alarmDaysString, true)
+                console.log("New alarm added.")
+            }
             addAlarmDialog.close()
         }
     }

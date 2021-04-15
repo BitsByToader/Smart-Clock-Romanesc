@@ -1,15 +1,23 @@
 #include "alarms.h"
 
 Alarms::Alarms(QObject *parent) : QObject(parent) {
-    Alarm *alarm1 = new Alarm("alarma1", 6, 30, {"Lu", "Ma"}, true);
-    Alarm *alarm2 = new Alarm("scoala", 8, 00, {"Lu", "Ma"}, false);
-    Alarm *alarm3 = new Alarm("viata", 9, 45, {"Lu", "Ma", "Mi"}, true);
+    QSqlQuery query;
 
-    m_list.append(alarm1);
-    m_list.append(alarm2);
-    m_list.append(alarm3);
+    //With the database connection already open, we can read the alarms from the database and put them in memory.
+    query = QSqlQuery("SELECT alarmID, alarmName, alarmHour, alarmMinutes, alarmDays, alarmActivated FROM alarms;");
 
-    //TODO create the alarms list here from the database
+    while ( query.next() ) {
+        Alarm *alarmToAdd = new Alarm();
+
+        alarmToAdd->setAlarmUUID(query.value(0).toString());
+        alarmToAdd->setAlarmName(query.value(1).toString());
+        alarmToAdd->setAlarmHour(query.value(2).toInt());
+        alarmToAdd->setAlarmMinutes(query.value(3).toInt());
+        alarmToAdd->setAlarmDays(query.value(4).toString());
+        alarmToAdd->setAlarmActivated(query.value(5).toInt());
+
+        m_list.append(alarmToAdd);
+    }
 }
 
 void Alarms::setList(QList<Alarm *> list) {
@@ -20,44 +28,52 @@ void Alarms::setList(QList<Alarm *> list) {
     emit listChanged(m_list);
 }
 
-void Alarms::addAlarm(QString alarmName, int alarmHour, int alarmMinutes, QList<QString> alarmDays, bool alarmActivated) {
+void Alarms::addAlarm(QString alarmName, int alarmHour, int alarmMinutes, QString alarmDays, bool alarmActivated) {
     Alarm *newAlarm = new Alarm(alarmName, alarmHour, alarmMinutes, alarmDays, alarmActivated);
 
     m_list.append(newAlarm);
     emit listChanged(m_list);
 
-    //TODO: add the alarm to the database here.
+    QSqlQuery query;
+    query.prepare("INSERT INTO alarms (alarmID, alarmName, alarmHour, alarmMinutes, alarmDays, alarmActivated) VALUES (:alarmUUID, :alarmName, :alarmHour, :alarmMinutes, :alarmDays, :alarmActivated);");
+    query.bindValue(":alarmUUID", newAlarm->alarmUUID());
+    query.bindValue(":alarmName", alarmName);
+    query.bindValue(":alarmHour", alarmHour);
+    query.bindValue(":alarmMinutes", alarmMinutes);
+    query.bindValue(":alarmDays", alarmDays);
+    query.bindValue(":alarmActivated", alarmActivated);
+    query.exec();
+
+    qDebug()<<"Added i think?";
+    qDebug()<<"SQL ERROR: "<<query.lastError().text();
 }
 
-void Alarms::updateAlarm(QString alarmUUID, QString alarmName, int alarmHour, int alarmMinutes, QList<QString> alarmDays) {
+void Alarms::updateAlarm(QString alarmUUID, QString alarmName, int alarmHour, int alarmMinutes, QString alarmDays, bool alarmActivated) {
     for ( int i = 0; i < m_list.count(); i++ ) {
         if ( m_list[i]->alarmUUID() == alarmUUID ) {
             //Get the alarm that needs updating.
             Alarm *alarmToUpdate = m_list[i];
 
-            //Check if all the values have the default values.
-            //If they don't then update them.
-            if ( alarmName != "default_alarm_name" ) {
-                alarmToUpdate->setAlarmName(alarmName);
-            }
+            alarmToUpdate->setAlarmName(alarmName);
+            alarmToUpdate->setAlarmHour(alarmHour);
+            alarmToUpdate->setAlarmMinutes(alarmMinutes);
+            alarmToUpdate->setAlarmDays(alarmDays);
+            alarmToUpdate->setAlarmActivated(alarmActivated);
 
-            if ( alarmHour != -1 ) {
-                alarmToUpdate->setAlarmHour(alarmHour);
-            }
-
-            if ( alarmMinutes != -1 ) {
-                alarmToUpdate->setAlarmMinutes(alarmMinutes);
-            }
-
-            if ( alarmDays.isEmpty() ) {
-                alarmToUpdate->setAlarmDays(alarmDays);
-            }
-
+            emit listChanged(m_list);
             break;
         }
     }
 
-    //TODO update the databsae here with all the new/old values.
+    QSqlQuery query;
+    query.prepare("UPDATE alarms SET alarmID=:alarmUUID, alarmName=:alarmName, alarmHour=:alarmHour, alarmMinutes=:alarmMinutes, alarmDays=:alarmDays, alarmActivated=:alarmActivated WHERE alarmID=:alarmUUID;");
+    query.bindValue(":alarmUUID", alarmUUID);
+    query.bindValue(":alarmName", alarmName);
+    query.bindValue(":alarmHour", alarmHour);
+    query.bindValue(":alarmMinutes", alarmMinutes);
+    query.bindValue(":alarmDays", alarmDays);
+    query.bindValue(":alarmActivated", alarmActivated);
+    query.exec();
 }
 
 void Alarms::deleteAlarm(QString alarmUUID) {
@@ -75,5 +91,9 @@ void Alarms::deleteAlarm(QString alarmUUID) {
         }
     }
 
-    //TODO: delete the alarm from the database
+    QSqlQuery query;
+    query.prepare("DELETE FROM alarms WHERE alarmID=:alarmID");
+    query.bindValue(":alarmID", alarmUUID);
+    query.exec();
+    qDebug()<<"SQL ERROR: "<<query.lastError().text();
 }
