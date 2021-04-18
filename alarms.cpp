@@ -17,6 +17,50 @@ Alarms::Alarms(QObject *parent) : QObject(parent) {
         alarmToAdd->setAlarmActivated(query.value(5).toInt());
 
         m_list.append(alarmToAdd);
+        alarmsHashedByID.insert(alarmToAdd->alarmUUID(), alarmToAdd);
+    }
+
+    QTimer *timer = new QTimer(this);
+    connect(timer, &QTimer::timeout, this, &Alarms::checkForAlarms);
+    ///TODO: FIX THIS ERROR REGARDING THREADS^^^
+    timer->start(1000);
+}
+
+void Alarms::checkForAlarms() {
+    qDebug()<<"Checking for pending alarms...";
+
+    QDateTime currentDate = QDateTime::currentDateTime();
+
+    QSqlQuery query("SELECT alarmHour, alarmName, alarmDays, alarmActivated, alarmID FROM alarms;");
+
+    while ( query.next() ) {
+        int hour = query.value(0).toInt();
+        int minutes = query.value(1).toInt();
+        QString days = query.value(2).toString();
+        QStringList daysArray = days.split(" ");
+        bool activated = query.value(3).toInt();
+        QString alarmID = query.value(4).toString();
+
+        if ( activated ) {
+            if ( hour == currentDate.time().hour() && minutes == currentDate.time().minute() ) {
+                if ( daysArray.isEmpty() ) {
+                    //If the array is empty then the alarm shouldn't repeat so we disable it.
+                    alarmsHashedByID[alarmID]->setAlarmActivated(false);
+
+                    ///TODO: Ring the alarm here.
+                    /// When ringing the alarm, also call a function to update the alarm headline.
+                    qDebug()<<"Rang!";
+                    break;
+                } else if ( daysArray.contains( daysOfWeekList[currentDate.date().dayOfWeek()] ) ) {
+                    //The array isn't empty and we are in the correct day to ring the alarm.
+                    ///TODO: Ring the alarm here.
+                    qDebug()<<"Rang!";
+                    break;
+                }
+
+                //We aren't in the correct day, so we don't ring the alarm...
+            }
+        }
     }
 }
 

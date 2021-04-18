@@ -51,10 +51,10 @@ Rectangle {
         currentIndex: alarmHourToUse
 
         flat: true
-        model: 25
+        model: 24
         validator: IntValidator {
             bottom: 1;
-            top: 24;
+            top: 23;
         }
 
         displayText: parseInt(parseInt(currentText) / 10) === 0 ? "0" + currentText : currentText
@@ -85,10 +85,10 @@ Rectangle {
         currentIndex: alarmMinutesToUse
 
         flat: true
-        model: 61
+        model: 60
         validator: IntValidator {
             bottom: 1;
-            top: 60;
+            top: 59;
         }
 
         displayText: parseInt(parseInt(currentText) / 10) === 0 ? "0" + currentText : currentText

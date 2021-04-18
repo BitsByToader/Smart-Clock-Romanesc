@@ -3,7 +3,12 @@
 
 #include <QObject>
 #include <QtDebug>
+#include <QHash>
 #include <QtSql>
+#include <QDate>
+#include <QDateTime>
+#include <QTime>
+#include <QTimer>
 
 #include "alarm.h"
 
@@ -34,12 +39,16 @@ public slots:
     void addAlarm(QString alarmName, int alarmHour, int alarmMinutes, QString alarmDays, bool alarmActivated);
     void updateAlarm(QString alarmUUID, QString alarmName, int alarmHour, int alarmMinutes, QString alarmDays, bool alarmActivated);
     void deleteAlarm(QString alarmUUID);
+    void checkForAlarms();
 
 signals:
     void listChanged(QList<Alarm*> list);
 
 private:
     QList<Alarm*> m_list;
+    QHash<QString, Alarm*> alarmsHashedByID;
 };
+
+static QList<QString> daysOfWeekList = {"NaN", "Lu", "Ma", "Mi", "Jo", "Vi", "Sa", "Du"};
 
 #endif // ALARMS_H
