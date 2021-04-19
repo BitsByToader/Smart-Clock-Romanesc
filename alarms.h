@@ -34,19 +34,24 @@ public:
         return m_list;
     }
 
+    static QString makeNumberDoubleDigit(int number);
+
 public slots:
     void setList(QList<Alarm*> list);
     void addAlarm(QString alarmName, int alarmHour, int alarmMinutes, QString alarmDays, bool alarmActivated);
     void updateAlarm(QString alarmUUID, QString alarmName, int alarmHour, int alarmMinutes, QString alarmDays, bool alarmActivated);
     void deleteAlarm(QString alarmUUID);
     void checkForAlarms();
+    void constructNewHeadline();
 
 signals:
     void listChanged(QList<Alarm*> list);
+    void updateSmartClockTimeAndDate(int hour, int minute, QString formattedDate);
+    void updateHeadline(QString newHeadline);
 
 private:
     QList<Alarm*> m_list;
-    QHash<QString, Alarm*> alarmsHashedByID;
+    QTimer *alarmTimer = nullptr;
 };
 
 static QList<QString> daysOfWeekList = {"NaN", "Lu", "Ma", "Mi", "Jo", "Vi", "Sa", "Du"};

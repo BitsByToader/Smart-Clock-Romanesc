@@ -2,6 +2,7 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.VirtualKeyboard 2.15
 import QtQuick.Controls.Material 2.15
+import tudor.SmartClock 1.0
 
 Pane {
     id: mainViewPane
@@ -22,7 +23,7 @@ Pane {
 
     Label {
         id: clockTime
-        text: "23:59"
+        text: SmartClock.hour + ":" + SmartClock.minute
 
         font.bold: true
         font.weight: Font.Black
@@ -35,7 +36,7 @@ Pane {
 
     Label {
         id: clockDate
-        text: "Sunday,  4 April 2069"
+        text: SmartClock.date
 
         font.italic: true
         font.weight: Font.Light
@@ -47,7 +48,7 @@ Pane {
 
     Label {
         id: alarmStatus
-        text: "You have an alarm for tomorrow morning at 7 o'clock."
+        text: SmartClock.headline
 
         font.italic: true
         font.weight: Font.Light

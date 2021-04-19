@@ -10,9 +10,9 @@ int main(int argc, char *argv[]) {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 #endif
 
-    SmartClock *smartClock = new SmartClock();
-
     QGuiApplication app(argc, argv);
+
+    SmartClock *smartClock = new SmartClock();
 
     QQmlApplicationEngine engine;
     const QUrl url(QStringLiteral("qrc:/main.qml"));
