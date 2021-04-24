@@ -162,13 +162,16 @@ void Alarms::constructNewHeadline() {
 }
 
 void Alarms::cancelNextAlarm() {
-    updateAlarm(nextAlarmToRing->alarmUUID(),
-                nextAlarmToRing->alarmName(),
-                nextAlarmToRing->alarmHour(),
-                nextAlarmToRing->alarmMinutes(),
-                nextAlarmToRing->alarmDays(),
-                false);
-    nextAlarmToRing = nullptr;
+    if ( !alarmSnoozed ) {
+        updateAlarm(nextAlarmToRing->alarmUUID(),
+                    nextAlarmToRing->alarmName(),
+                    nextAlarmToRing->alarmHour(),
+                    nextAlarmToRing->alarmMinutes(),
+                    nextAlarmToRing->alarmDays(),
+                    false);
+        nextAlarmToRing = nullptr;
+    }
+
     alarmSnoozed = false;
 
     emit nextAlarmChanged(nextAlarmToRing);
