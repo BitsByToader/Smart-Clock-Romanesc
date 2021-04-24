@@ -17,6 +17,10 @@ ApplicationWindow {
     visible: true
     title: qsTr("Smart Clock")
 
+    function makeNumbersWithDoubleDigits(number) {
+        return ( parseInt( parseInt(number) / 10 ) === 0 ) ? ("0" + number) : number;
+    }
+
     SwipeView {
         id: swipeView
         anchors.fill: parent
@@ -99,6 +103,15 @@ ApplicationWindow {
                 duration: 250
             }
         }
+    }
+
+    Dialog {
+        id: alarmRangDialog
+        title: "Alarma"
+
+        anchors.centerIn: parent
+
+        AlarmRangDialog {}
     }
 
     //Used for the virtual keyboard.

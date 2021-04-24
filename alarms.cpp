@@ -17,6 +17,7 @@ Alarms::Alarms(QObject *parent) : QObject(parent) {
         alarmToAdd->setAlarmActivated(query.value(5).toInt());
 
         m_list.append(alarmToAdd);
+        m_alarmsHash.insert(alarmToAdd->alarmUUID(), alarmToAdd);
     }
 
     alarmTimer = new QTimer(this);
@@ -30,6 +31,20 @@ void Alarms::checkForAlarms() {
     qDebug()<<"Checking for pending alarms at: "<<currentDate.time().hour()<<":"<<currentDate.time().minute();
 
     emit updateSmartClockTimeAndDate(currentDate.time().hour(), currentDate.time().minute(), currentDate.toString("dddd,  d MMMM yyyy"));
+
+    if ( alarmSnoozed ) {
+        //There is a snoozed alarm, take care of it first.
+        int minutesSinceMidnight = currentDate.time().hour() * 60 + currentDate.time().minute();
+
+        if ( timeToRing == minutesSinceMidnight ) {
+            qDebug()<<"Snoozed alarm rang!";
+
+            alarmSnoozed = false;
+            emit ringAlarmUI();
+
+            return;
+        }
+    }
 
     QSqlQuery query("SELECT alarmHour, alarmMinutes, alarmDays, alarmActivated, alarmID, alarmName FROM alarms;");
 
@@ -46,16 +61,18 @@ void Alarms::checkForAlarms() {
             if ( hour == currentDate.time().hour() && minutes == currentDate.time().minute() ) {
                 if ( days.isEmpty() ) {
                     //If the array is empty then the alarm shouldn't repeat so we disable it.
+                    qDebug()<<"Rang only once!";
+                    emit ringAlarmUI();
+
                     this->updateAlarm(alarmID, alarmName, hour, minutes, days, false);
 
-                    ///TODO: Ring the alarm here.
-                    /// When ringing the alarm, also call a function to update the alarm headline.
-                    qDebug()<<"Rang only once!";
                     break;
                 } else if ( daysArray.contains( daysOfWeekList[currentDate.date().dayOfWeek()] ) ) {
                     //The array isn't empty and we are in the correct day to ring the alarm.
-                    ///TODO: Ring the alarm here.
+
                     qDebug()<<"Rang!";
+                    emit ringAlarmUI();
+
                     break;
                 }
 
@@ -71,51 +88,101 @@ void Alarms::constructNewHeadline() {
 
     int minutesSinceMidnight = currentTime.hour() * 60 + currentTime.minute();
     int currentDay = currentDate.dayOfWeek();
-    int nextDay = (currentDay == 7) ? 1 : currentDay + 1;
+    int nextDay = ( currentDay == 7 ) ? 1 : currentDay + 1;
 
     QString newHeadline = "Nu aveti nici o alarma.";
 
+    if ( alarmSnoozed ) {
+        QString hour = makeNumberDoubleDigit(timeToRing / 60);
+        QString minute = makeNumberDoubleDigit(timeToRing % 60);
+
+        newHeadline = "Alarma amanata va suna la ora " + hour + ":" + minute + ".";
+        emit updateHeadline(newHeadline);
+
+        return;
+    }
+
     QSqlQuery query;
-    query.prepare("SELECT alarmDays, alarmHour, alarmMinutes FROM alarms ORDER BY alarmHour * 60 + alarmMinutes;");
-//    query.addBindValue(minutesSinceMidnight);
+    query.prepare("SELECT alarmDays, alarmHour, alarmMinutes, alarmActivated, alarmID FROM alarms ORDER BY alarmHour * 60 + alarmMinutes;");
     query.exec();
 
+    bool foundAlarmOnCurrDay = false;
+    nextAlarmToRing = nullptr;
+
     while ( query.next() ) {
+        //First loop to scan for alarms in the current day.
         QString alarmDays = query.value(0).toString();
-        qDebug()<<alarmDays;
         QStringList daysArray = alarmDays.split(" ");
 
         int hour = query.value(1).toInt();
         int minutes = query.value(2).toInt();
+        bool alarmActivated = query.value(3).toInt();
+        QString alarmID = query.value(4).toString();
 
-        if ( alarmDays.isEmpty() || daysArray.contains( daysOfWeekList[currentDay] ) || daysArray.contains( daysOfWeekList[nextDay] ) ) {
-            bool isToday = true;
+        if ( alarmActivated ) {
+            if ( alarmDays.isEmpty() || daysArray.contains( daysOfWeekList[currentDay] ) ) {
+                if ( minutesSinceMidnight < hour * 60 + minutes ) {
+                    foundAlarmOnCurrDay = true;
+                    nextAlarmToRing = m_alarmsHash[alarmID];
 
-            if ( daysArray.contains( daysOfWeekList[currentDay] )  && minutesSinceMidnight > hour * 60 + minutes ) {
-                //Am trecut de alarma din ziua curenta deci nu  ne intereseaza pentru headline.
-                continue;
-            } else if ( daysArray.contains( daysOfWeekList[currentDay] ) && minutesSinceMidnight <= hour * 60 + minutes ) {
-                //Alarma se afla dupa momentul curent deci este cea mai apropriata.
-                isToday = true;
-            } else if ( daysArray.contains( daysOfWeekList[nextDay] ) ) {
-                //Alarma este in ziua urmatoare...
-                isToday = false;
+                    newHeadline = "Urmatoarea alarma este azi la ora " + makeNumberDoubleDigit(hour) + ":" + makeNumberDoubleDigit(minutes) + ".";
+
+                    break;
+                }
             }
-
-            QString day = isToday ? "azi" : "maine";
-
-            newHeadline = "Urmatoarea alarma este " + day + " la ora " + makeNumberDoubleDigit(hour) + ":" + makeNumberDoubleDigit(minutes) + ".";
-            break;
         }
     }
 
+    if  ( !foundAlarmOnCurrDay ) {
+        query.exec();
+
+        while ( query.next() ) {
+            //Second loop to scan for alarms in the next day.
+            QString alarmDays = query.value(0).toString();
+            QStringList daysArray = alarmDays.split(" ");
+
+            int hour = query.value(1).toInt();
+            int minutes = query.value(2).toInt();
+            bool alarmActivated = query.value(3).toInt();
+            QString alarmID = query.value(4).toString();
+
+            if ( alarmActivated ) {
+                if ( alarmDays.isEmpty() || daysArray.contains( daysOfWeekList[nextDay] ) ) {
+                    newHeadline = "Urmatoarea alarma este maine la ora " + makeNumberDoubleDigit(hour) + ":" + makeNumberDoubleDigit(minutes) + ".";
+                    nextAlarmToRing = m_alarmsHash[alarmID];
+
+                    break;
+                }
+            }
+        }
+    }
+
+    emit nextAlarmChanged(nextAlarmToRing);
     emit updateHeadline(newHeadline);
-    ///The basic principle for the logic of this method is there.
-    /// However I need to tweak the conditions a bit more.
-    /// But more importantly I should probably loop through the alarms twice.
-    /// The first time it will check for alarms in the current day.
-    /// If it didn't find anything, it will proceed to search again but check
-    /// if there's anything for the next day.
+}
+
+void Alarms::cancelNextAlarm() {
+    updateAlarm(nextAlarmToRing->alarmUUID(),
+                nextAlarmToRing->alarmName(),
+                nextAlarmToRing->alarmHour(),
+                nextAlarmToRing->alarmMinutes(),
+                nextAlarmToRing->alarmDays(),
+                false);
+    nextAlarmToRing = nullptr;
+    alarmSnoozed = false;
+
+    emit nextAlarmChanged(nextAlarmToRing);
+    constructNewHeadline();
+}
+
+void Alarms::snoozeAlarm() {
+    alarmSnoozed = true;
+
+    QTime currentTime = QTime::currentTime();
+    int minutesSinceMidnight = currentTime.hour() * 60 + currentTime.minute();
+    timeToRing = minutesSinceMidnight + 1;
+
+    constructNewHeadline();
 }
 
 QString Alarms::makeNumberDoubleDigit(int number) {

@@ -68,8 +68,12 @@ Pane {
         flat: true
         Material.accent: Material.Blue
 
+        visible: alarmStatus.text == "Nu aveti nici o alarma." ? false : true
+
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 30
         anchors.horizontalCenter: parent.horizontalCenter
+
+        onClicked: SmartClock.alarms.cancelNextAlarm()
     }
 }

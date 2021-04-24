@@ -15,6 +15,7 @@
 class Alarms : public QObject {
     Q_OBJECT
     Q_PROPERTY(QList<Alarm*> list READ list WRITE setList NOTIFY listChanged)
+    Q_PROPERTY(Alarm* nextAlarm READ nextAlarm NOTIFY nextAlarmChanged)
     ///This implementation ^^^ of exposing a C++ list to QML has some tradeoffs.
     ///Mainly, it is not very performant when inserting, updating or deleting elements from the list
     ///because it has to completely rewrite the list. This is not a huge issue because the elements in
@@ -34,6 +35,10 @@ public:
         return m_list;
     }
 
+    Alarm * nextAlarm() const {
+        return nextAlarmToRing;
+    }
+
     static QString makeNumberDoubleDigit(int number);
 
 public slots:
@@ -43,15 +48,25 @@ public slots:
     void deleteAlarm(QString alarmUUID);
     void checkForAlarms();
     void constructNewHeadline();
+    void cancelNextAlarm();
+    void snoozeAlarm();
 
 signals:
     void listChanged(QList<Alarm*> list);
+    void nextAlarmChanged(Alarm *alarm);
     void updateSmartClockTimeAndDate(int hour, int minute, QString formattedDate);
     void updateHeadline(QString newHeadline);
+    void ringAlarmUI();
 
 private:
     QList<Alarm*> m_list;
+    QHash<QString, Alarm*> m_alarmsHash;
+    Alarm *nextAlarmToRing = nullptr;
     QTimer *alarmTimer = nullptr;
+
+    bool alarmSnoozed = false;
+    int timeToRing = 0;
+//    QString alarmToSnooze = "";
 };
 
 static QList<QString> daysOfWeekList = {"NaN", "Lu", "Ma", "Mi", "Jo", "Vi", "Sa", "Du"};

@@ -23,7 +23,7 @@ Item {
     }
 
     Label {
-        text: modelData.alarmHour + ":" + modelData.alarmMinutes
+        text: makeNumbersWithDoubleDigits(modelData.alarmHour) + ":" + makeNumbersWithDoubleDigits(modelData.alarmMinutes)
 
         font.pixelSize: 26
 

@@ -13,5 +13,6 @@
         <file>AlarmsView.qml</file>
         <file>AlarmListDelegate.qml</file>
         <file>AddAlarmDialogContent.qml</file>
+        <file>AlarmRangDialog.qml</file>
     </qresource>
 </RCC>
