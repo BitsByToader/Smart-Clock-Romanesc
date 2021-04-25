@@ -22,7 +22,11 @@ Alarms::Alarms(QObject *parent) : QObject(parent) {
 
     alarmTimer = new QTimer(this);
     connect(this->alarmTimer, &QTimer::timeout, this, &Alarms::checkForAlarms);
-    this->alarmTimer->start(60000);
+
+    QTimer syncTimer(this);
+    syncTimer.setTimerType(Qt::PreciseTimer);
+    syncTimer.singleShot((60 - QTime::currentTime().second())*1000, this, &Alarms::syncTimer);
+
 }
 
 void Alarms::checkForAlarms() {
@@ -186,6 +190,13 @@ void Alarms::snoozeAlarm() {
     timeToRing = minutesSinceMidnight + 1;
 
     constructNewHeadline();
+}
+
+//Function that gets called only once at the start of the minute to sync the timer to the system clock.
+void Alarms::syncTimer() {
+    qDebug()<<"Syncing timer...";
+    this->alarmTimer->start(60000);
+    this->checkForAlarms();
 }
 
 QString Alarms::makeNumberDoubleDigit(int number) {

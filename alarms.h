@@ -50,6 +50,7 @@ public slots:
     void constructNewHeadline();
     void cancelNextAlarm();
     void snoozeAlarm();
+    void syncTimer();
 
 signals:
     void listChanged(QList<Alarm*> list);
