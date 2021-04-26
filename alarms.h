@@ -12,7 +12,7 @@
 
 #include "alarm.h"
 
-class Alarms : public QObject {
+class AlarmManager : public QObject {
     Q_OBJECT
     Q_PROPERTY(QList<Alarm*> list READ list WRITE setList NOTIFY listChanged)
     Q_PROPERTY(Alarm* nextAlarm READ nextAlarm NOTIFY nextAlarmChanged)
@@ -29,7 +29,7 @@ class Alarms : public QObject {
     /// is acceptable, and not even noticable.
 
 public:
-    explicit Alarms(QObject *parent = nullptr);
+    explicit AlarmManager(QObject *parent = nullptr);
 
     QList<Alarm*> list() const {
         return m_list;

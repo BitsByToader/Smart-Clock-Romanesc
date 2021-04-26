@@ -6,10 +6,12 @@
 #include <QDebug>
 
 #include <alarms.h>
+#include <quotemanager.h>
 
 class SmartClock : public QObject {
     Q_OBJECT
-    Q_PROPERTY(Alarms* alarms READ alarms NOTIFY alarmsChanged)
+    Q_PROPERTY(AlarmManager* alarms READ alarms NOTIFY alarmsChanged)
+    Q_PROPERTY(QuoteManager* quotes READ quotes NOTIFY quotesChanged)
     Q_PROPERTY(QString hour READ hour NOTIFY hourChanged)
     Q_PROPERTY(QString minute READ minute NOTIFY minuteChanged)
     Q_PROPERTY(QString date READ date WRITE setDate NOTIFY dateChanged)
@@ -22,7 +24,7 @@ public:
         return ( number / 10 == 0 ) ? ("0" + QString::number(number)) : QString::number(number);
     }
 
-    Alarms* alarms() const {
+    AlarmManager* alarms() const {
         return m_alarms;
     }
 
@@ -42,6 +44,10 @@ public:
         return m_headline;
     }
 
+    QuoteManager* quotes() const {
+        return m_quotes;
+    }
+
 public slots:
     void updateSmartClockTimeAndDate(int hour, int minute, QString formattedDate);
 //    void updateHeadline(QString newHeadline);
@@ -51,14 +57,17 @@ public slots:
     void setHeadline(QString headline);
 
 signals:
-    void alarmsChanged(Alarms* alarms);
+    void alarmsChanged(AlarmManager* alarms);
     void hourChanged();
     void minuteChanged();
     void dateChanged(QString date);
     void headlineChanged(QString headline);
+    void quotesChanged(QuoteManager* quotes);
 
 private:
-    Alarms* m_alarms;
+    AlarmManager* m_alarms;
+    QuoteManager* m_quotes;
+
     int m_hour = 0;
     int m_minute = 0;
     QString m_date;

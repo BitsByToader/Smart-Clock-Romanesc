@@ -12,6 +12,7 @@ SOURCES += \
         alarm.cpp \
         alarms.cpp \
         main.cpp \
+        quotemanager.cpp \
         smartclock.cpp
 
 RESOURCES += qml.qrc
@@ -30,4 +31,5 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 HEADERS += \
     alarm.h \
     alarms.h \
+    quotemanager.h \
     smartclock.h

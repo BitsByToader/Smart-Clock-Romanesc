@@ -9,7 +9,7 @@ Pane {
 
     Label {
         id: inspirationalQuote
-        text: "To be or not to be, that is the question."
+        text: SmartClock.quotes.quote
 
         font.italic: true
         font.weight: Font.Light

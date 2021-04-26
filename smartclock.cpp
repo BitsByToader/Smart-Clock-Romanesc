@@ -15,11 +15,17 @@ SmartClock::SmartClock(QObject *parent) : QObject(parent) {
         qDebug()<<"SQL ERROR: "<<query.lastError().text();
     }
 
-    this->m_alarms = new Alarms();
-    connect(m_alarms, &Alarms::updateSmartClockTimeAndDate, this, &SmartClock::updateSmartClockTimeAndDate);
-    connect(m_alarms, &Alarms::updateHeadline, this, &SmartClock::setHeadline);
+    //Initialize the AlarmManager
+    this->m_alarms = new AlarmManager();
+
+    connect(m_alarms, &AlarmManager::updateSmartClockTimeAndDate, this, &SmartClock::updateSmartClockTimeAndDate);
+    connect(m_alarms, &AlarmManager::updateHeadline, this, &SmartClock::setHeadline);
+
     this->m_alarms->checkForAlarms();
     this->m_alarms->constructNewHeadline();
+
+    //Initialize the QuoteManager
+    this->m_quotes = new QuoteManager();
 }
 
 void SmartClock::updateSmartClockTimeAndDate(int hour, int minute, QString formattedDate) {

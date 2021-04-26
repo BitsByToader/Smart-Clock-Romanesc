@@ -1,6 +1,6 @@
 #include "alarms.h"
 
-Alarms::Alarms(QObject *parent) : QObject(parent) {
+AlarmManager::AlarmManager(QObject *parent) : QObject(parent) {
     QSqlQuery query;
 
     //With the database connection already open, we can read the alarms from the database and put them in memory.
@@ -21,15 +21,15 @@ Alarms::Alarms(QObject *parent) : QObject(parent) {
     }
 
     alarmTimer = new QTimer(this);
-    connect(this->alarmTimer, &QTimer::timeout, this, &Alarms::checkForAlarms);
+    connect(this->alarmTimer, &QTimer::timeout, this, &AlarmManager::checkForAlarms);
 
     QTimer syncTimer(this);
     syncTimer.setTimerType(Qt::PreciseTimer);
-    syncTimer.singleShot((60 - QTime::currentTime().second())*1000, this, &Alarms::syncTimer);
+    syncTimer.singleShot((60 - QTime::currentTime().second())*1000, this, &AlarmManager::syncTimer);
 
 }
 
-void Alarms::checkForAlarms() {
+void AlarmManager::checkForAlarms() {
     QDateTime currentDate = QDateTime::currentDateTime();
 
     qDebug()<<"Checking for pending alarms at: "<<currentDate.time().hour()<<":"<<currentDate.time().minute();
@@ -86,7 +86,7 @@ void Alarms::checkForAlarms() {
     }
 }
 
-void Alarms::constructNewHeadline() {
+void AlarmManager::constructNewHeadline() {
     QTime currentTime= QTime::currentTime();
     QDate currentDate= QDate::currentDate();
 
@@ -165,7 +165,7 @@ void Alarms::constructNewHeadline() {
     emit updateHeadline(newHeadline);
 }
 
-void Alarms::cancelNextAlarm() {
+void AlarmManager::cancelNextAlarm() {
     if ( !alarmSnoozed ) {
         updateAlarm(nextAlarmToRing->alarmUUID(),
                     nextAlarmToRing->alarmName(),
@@ -182,28 +182,29 @@ void Alarms::cancelNextAlarm() {
     constructNewHeadline();
 }
 
-void Alarms::snoozeAlarm() {
+void AlarmManager::snoozeAlarm() {
     alarmSnoozed = true;
 
     QTime currentTime = QTime::currentTime();
     int minutesSinceMidnight = currentTime.hour() * 60 + currentTime.minute();
-    timeToRing = minutesSinceMidnight + 1;
+    timeToRing = minutesSinceMidnight + 10;
+    ///TODO: Make the snooze time user configurable
 
     constructNewHeadline();
 }
 
 //Function that gets called only once at the start of the minute to sync the timer to the system clock.
-void Alarms::syncTimer() {
+void AlarmManager::syncTimer() {
     qDebug()<<"Syncing timer...";
     this->alarmTimer->start(60000);
     this->checkForAlarms();
 }
 
-QString Alarms::makeNumberDoubleDigit(int number) {
+QString AlarmManager::makeNumberDoubleDigit(int number) {
     return ( number / 10 == 0 ) ? ("0" + QString::number(number)) : QString::number(number);
 }
 
-void Alarms::setList(QList<Alarm *> list) {
+void AlarmManager::setList(QList<Alarm *> list) {
     if (m_list == list)
         return;
 
@@ -211,7 +212,7 @@ void Alarms::setList(QList<Alarm *> list) {
     emit listChanged(m_list);
 }
 
-void Alarms::addAlarm(QString alarmName, int alarmHour, int alarmMinutes, QString alarmDays, bool alarmActivated) {
+void AlarmManager::addAlarm(QString alarmName, int alarmHour, int alarmMinutes, QString alarmDays, bool alarmActivated) {
     Alarm *newAlarm = new Alarm(alarmName, alarmHour, alarmMinutes, alarmDays, alarmActivated);
 
     m_list.append(newAlarm);
@@ -233,7 +234,7 @@ void Alarms::addAlarm(QString alarmName, int alarmHour, int alarmMinutes, QStrin
     constructNewHeadline();
 }
 
-void Alarms::updateAlarm(QString alarmUUID, QString alarmName, int alarmHour, int alarmMinutes, QString alarmDays, bool alarmActivated) {
+void AlarmManager::updateAlarm(QString alarmUUID, QString alarmName, int alarmHour, int alarmMinutes, QString alarmDays, bool alarmActivated) {
     for ( int i = 0; i < m_list.count(); i++ ) {
         if ( m_list[i]->alarmUUID() == alarmUUID ) {
             //Get the alarm that needs updating.
@@ -263,7 +264,7 @@ void Alarms::updateAlarm(QString alarmUUID, QString alarmName, int alarmHour, in
     constructNewHeadline();
 }
 
-void Alarms::deleteAlarm(QString alarmUUID) {
+void AlarmManager::deleteAlarm(QString alarmUUID) {
     for ( int i = 0; i < m_list.count(); i++ ) {
         if ( m_list[i]->alarmUUID() == alarmUUID ) {
             //Deallocate the alarm that is marked as deleted.
