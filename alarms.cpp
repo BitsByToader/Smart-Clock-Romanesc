@@ -25,7 +25,9 @@ AlarmManager::AlarmManager(QObject *parent) : QObject(parent) {
 
     QTimer syncTimer(this);
     syncTimer.setTimerType(Qt::PreciseTimer);
-    syncTimer.singleShot((60 - QTime::currentTime().second())*1000, this, &AlarmManager::syncTimer);
+
+    //Add an extra second to the sync Timer so it doesn't fire off to quickly and remain 1 minute behind.
+    syncTimer.singleShot((60 - QTime::currentTime().second() + 1 )*1000, this, &AlarmManager::syncTimer);
 
 }
 
@@ -216,6 +218,7 @@ void AlarmManager::addAlarm(QString alarmName, int alarmHour, int alarmMinutes, 
     Alarm *newAlarm = new Alarm(alarmName, alarmHour, alarmMinutes, alarmDays, alarmActivated);
 
     m_list.append(newAlarm);
+    m_alarmsHash.insert(newAlarm->alarmUUID(), newAlarm);
     emit listChanged(m_list);
 
     QSqlQuery query;
@@ -267,6 +270,9 @@ void AlarmManager::updateAlarm(QString alarmUUID, QString alarmName, int alarmHo
 void AlarmManager::deleteAlarm(QString alarmUUID) {
     for ( int i = 0; i < m_list.count(); i++ ) {
         if ( m_list[i]->alarmUUID() == alarmUUID ) {
+            //Remove the alarm from the alarmsHash before removing from the list so we can get the UUID.
+            m_alarmsHash.remove(m_list[i]->alarmUUID());
+
             //Deallocate the alarm that is marked as deleted.
             delete m_list[i];
 

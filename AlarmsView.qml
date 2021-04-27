@@ -61,7 +61,25 @@ Pane {
             alarmUUID = ""
             dialogWillEdit = false
 
-            isAddAlarmDialogVisible = true
+            addAlarmDialog.open()
+        }
+    }
+
+    Label {
+        id: alarmListPlaceholder
+        text: "Add an alarm with the '+' button."
+        opacity: SmartClock.alarms.list.length === 0 ? 100 : 0
+
+        anchors.centerIn: parent
+
+        color: Material.color(Material.Grey)
+        font.bold: true
+        font.pixelSize: 20
+
+        Behavior on opacity {
+            NumberAnimation {
+                duration: 150
+            }
         }
     }
 
@@ -86,7 +104,6 @@ Pane {
 
     Dialog {
         id: addAlarmDialog
-        visible: isAddAlarmDialogVisible
         title: "Add an alarm"
 
         anchors.centerIn: parent

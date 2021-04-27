@@ -14,5 +14,8 @@
         <file>AlarmListDelegate.qml</file>
         <file>AddAlarmDialogContent.qml</file>
         <file>AlarmRangDialog.qml</file>
+        <file>icons/gear.png</file>
+        <file>SettingsDialogContent.qml</file>
+        <file>FadeAnimation.qml</file>
     </qresource>
 </RCC>

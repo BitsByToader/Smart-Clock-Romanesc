@@ -7,6 +7,23 @@ import tudor.SmartClock 1.0
 Pane {
     id: mainViewPane
 
+    RoundButton {
+        id: settingsButton
+
+        icon.source: "/icons/gear.png"
+        flat: true
+        highlighted: true
+
+        Material.accent: Material.Blue
+
+        anchors.top: parent.top
+        anchors.topMargin: 0
+        anchors.right: parent.right
+        anchors.rightMargin: 15
+
+        onClicked: settingsDialog.open()
+    }
+
     Label {
         id: inspirationalQuote
         text: SmartClock.quotes.quote
@@ -18,7 +35,13 @@ Pane {
 
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
-        anchors.topMargin: 40
+        anchors.topMargin: 50
+
+        Behavior on text {
+            FadeAnimation {
+                target: inspirationalQuote
+            }
+        }
     }
 
     Label {
@@ -58,6 +81,12 @@ Pane {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: cancelNextAlarmButton.bottom
         anchors.bottomMargin: 45
+
+        Behavior on text {
+            FadeAnimation {
+                target: alarmStatus
+            }
+        }
     }
 
     Button {
@@ -75,5 +104,12 @@ Pane {
         anchors.horizontalCenter: parent.horizontalCenter
 
         onClicked: SmartClock.alarms.cancelNextAlarm()
+    }
+
+    Dialog {
+        id: settingsDialog
+        title: "Settings"
+
+        anchors.centerIn: parent
     }
 }
