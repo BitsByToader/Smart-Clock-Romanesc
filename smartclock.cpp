@@ -9,14 +9,32 @@ SmartClock::SmartClock(QObject *parent) : QObject(parent) {
         qDebug()<<m_dataBase.lastError()<<Qt::endl;
 
     if ( !m_dataBase.tables().contains("alarms") ) {
-        qDebug()<<"Empty database file!"<<Qt::endl;
+        qDebug()<<"No alarms table found!"<<Qt::endl;
         QSqlQuery query = QSqlQuery("CREATE TABLE alarms(alarmID varchar(50) NOT NULL, alarmName varchar(255), alarmHour int, alarmMinutes int, alarmDays varchar(255), alarmActivated int, PRIMARY KEY(alarmID));");
         query.exec();
-        qDebug()<<"SQL ERROR: "<<query.lastError().text();
+//        qDebug()<<"SQL ERROR: "<<query.lastError().text();
     }
 
+    QSqlQuery query;
+
+    if ( !m_dataBase.tables().contains("settings") ) {
+        qDebug()<<"No settings table found!";
+
+        query = QSqlQuery("CREATE TABLE settings(key varchar(255), value varchar(255));");
+        query.exec();
+
+        query = QSqlQuery("INSERT INTO settings(key, value) VALUES ('snooze', '10');");
+        query.exec();
+
+        query = QSqlQuery("INSERT INTO settings(key, value) VALUES ('alarmSound', 'ringtone.wav');");
+        query.exec();
+    }
+
+    //Initialize the SettingsManager
+    this->m_settings = new SettingsManager();
+
     //Initialize the AlarmManager
-    this->m_alarms = new AlarmManager();
+    this->m_alarms = new AlarmManager(settings());
 
     connect(m_alarms, &AlarmManager::updateSmartClockTimeAndDate, this, &SmartClock::updateSmartClockTimeAndDate);
     connect(m_alarms, &AlarmManager::updateHeadline, this, &SmartClock::setHeadline);

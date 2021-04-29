@@ -110,6 +110,16 @@ Pane {
         id: settingsDialog
         title: "Settings"
 
-        anchors.centerIn: parent
+//        anchors.horizontalCenter: parent.horizontalCenter
+        x: ( window.width - settingsDialog.width ) / 2
+        y: inputPanel.active ? 0 : (window.height - settingsDialog.height) / 2
+
+        Behavior on y {
+            NumberAnimation {
+                duration: 250
+            }
+        }
+
+        SettingsDialogContent {}
     }
 }

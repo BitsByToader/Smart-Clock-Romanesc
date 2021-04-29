@@ -7,11 +7,13 @@
 
 #include <alarms.h>
 #include <quotemanager.h>
+#include <settingsmanager.h>
 
 class SmartClock : public QObject {
     Q_OBJECT
     Q_PROPERTY(AlarmManager* alarms READ alarms NOTIFY alarmsChanged)
     Q_PROPERTY(QuoteManager* quotes READ quotes NOTIFY quotesChanged)
+    Q_PROPERTY(SettingsManager* settings READ settings NOTIFY settingsChanged)
     Q_PROPERTY(QString hour READ hour NOTIFY hourChanged)
     Q_PROPERTY(QString minute READ minute NOTIFY minuteChanged)
     Q_PROPERTY(QString date READ date WRITE setDate NOTIFY dateChanged)
@@ -26,6 +28,10 @@ public:
 
     AlarmManager* alarms() const {
         return m_alarms;
+    }
+
+    SettingsManager* settings() const {
+        return m_settings;
     }
 
     QString hour() const {
@@ -58,6 +64,7 @@ public slots:
 
 signals:
     void alarmsChanged(AlarmManager* alarms);
+    void settingsChanged(SettingsManager* settings);
     void hourChanged();
     void minuteChanged();
     void dateChanged(QString date);
@@ -67,6 +74,7 @@ signals:
 private:
     AlarmManager* m_alarms;
     QuoteManager* m_quotes;
+    SettingsManager* m_settings;
 
     int m_hour = 0;
     int m_minute = 0;

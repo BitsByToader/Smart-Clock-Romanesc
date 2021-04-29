@@ -1,6 +1,10 @@
 #include "alarms.h"
 
-AlarmManager::AlarmManager(QObject *parent) : QObject(parent) {
+AlarmManager::AlarmManager(SettingsManager *settings, QObject *parent) : QObject(parent) {
+    this->m_settings = settings;
+    snoozeTime = settings->snoozeTime();
+    connect(m_settings, &SettingsManager::snoozeTimeChanged, this, &AlarmManager::updateSnoozeTime);
+
     QSqlQuery query;
 
     //With the database connection already open, we can read the alarms from the database and put them in memory.
@@ -28,7 +32,6 @@ AlarmManager::AlarmManager(QObject *parent) : QObject(parent) {
 
     //Add an extra second to the sync Timer so it doesn't fire off to quickly and remain 1 minute behind.
     syncTimer.singleShot((60 - QTime::currentTime().second() + 1 )*1000, this, &AlarmManager::syncTimer);
-
 }
 
 void AlarmManager::checkForAlarms() {
@@ -189,8 +192,7 @@ void AlarmManager::snoozeAlarm() {
 
     QTime currentTime = QTime::currentTime();
     int minutesSinceMidnight = currentTime.hour() * 60 + currentTime.minute();
-    timeToRing = minutesSinceMidnight + 10;
-    ///TODO: Make the snooze time user configurable
+    timeToRing = minutesSinceMidnight + m_settings->snoozeTime();
 
     constructNewHeadline();
 }
@@ -200,6 +202,12 @@ void AlarmManager::syncTimer() {
     qDebug()<<"Syncing timer...";
     this->alarmTimer->start(60000);
     this->checkForAlarms();
+}
+
+void AlarmManager::updateSnoozeTime(int newTime) {
+    timeToRing = timeToRing - snoozeTime + newTime;
+    snoozeTime = newTime;
+    constructNewHeadline();
 }
 
 QString AlarmManager::makeNumberDoubleDigit(int number) {

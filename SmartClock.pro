@@ -13,6 +13,7 @@ SOURCES += \
         alarms.cpp \
         main.cpp \
         quotemanager.cpp \
+        settingsmanager.cpp \
         smartclock.cpp
 
 RESOURCES += qml.qrc
@@ -32,4 +33,5 @@ HEADERS += \
     alarm.h \
     alarms.h \
     quotemanager.h \
+    settingsmanager.h \
     smartclock.h

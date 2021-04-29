@@ -10,7 +10,8 @@
 #include <QTime>
 #include <QTimer>
 
-#include "alarm.h"
+#include <alarm.h>
+#include <settingsmanager.h>
 
 class AlarmManager : public QObject {
     Q_OBJECT
@@ -29,7 +30,7 @@ class AlarmManager : public QObject {
     /// is acceptable, and not even noticable.
 
 public:
-    explicit AlarmManager(QObject *parent = nullptr);
+    explicit AlarmManager(SettingsManager* settings, QObject *parent = nullptr);
 
     QList<Alarm*> list() const {
         return m_list;
@@ -51,6 +52,7 @@ public slots:
     void cancelNextAlarm();
     void snoozeAlarm();
     void syncTimer();
+    void updateSnoozeTime(int newTime);
 
 signals:
     void listChanged(QList<Alarm*> list);
@@ -60,12 +62,14 @@ signals:
     void ringAlarmUI();
 
 private:
+    SettingsManager* m_settings;
     QList<Alarm*> m_list;
     QHash<QString, Alarm*> m_alarmsHash;
     Alarm *nextAlarmToRing = nullptr;
     QTimer *alarmTimer = nullptr;
 
     bool alarmSnoozed = false;
+    int snoozeTime = 0;
     int timeToRing = 0;
 //    QString alarmToSnooze = "";
 };

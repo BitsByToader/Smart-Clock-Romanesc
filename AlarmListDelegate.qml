@@ -100,7 +100,7 @@ Item {
             dialogWillEdit = true
             alarmUUID = modelData.alarmUUID
 
-            isAddAlarmDialogVisible = true
+            addAlarmDialog.open()
         }
     }
 

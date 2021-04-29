@@ -9,7 +9,6 @@ import tudor.SmartClock 1.0
 
 Pane {
     id: alarmsViewPane
-    property var isAddAlarmDialogVisible: false
 
     property var alarmNameToUse: ""
     property var alarmHourToUse: 0
