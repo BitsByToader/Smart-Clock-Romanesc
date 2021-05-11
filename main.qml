@@ -24,7 +24,6 @@ ApplicationWindow {
     SwipeView {
         id: swipeView
         anchors.fill: parent
-        currentIndex: swipeIndicator.currentIndex
 
         MainView {}
 
@@ -34,7 +33,7 @@ ApplicationWindow {
     PageIndicator {
         id: swipeIndicator
 
-        count: 2
+        count: swipeView.count
         currentIndex: swipeView.currentIndex
         interactive: true
 
@@ -50,9 +49,7 @@ ApplicationWindow {
 
         anchors.verticalCenter: parent.verticalCenter
 
-        onClicked: {
-            swipeView.decrementCurrentIndex()
-        }
+        onClicked: swipeView.decrementCurrentIndex()
 
         states: [
             State {
@@ -82,9 +79,7 @@ ApplicationWindow {
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: parent.right
 
-        onClicked: {
-            swipeView.incrementCurrentIndex()
-       }
+        onClicked: swipeView.incrementCurrentIndex()
 
         states: [
             State {

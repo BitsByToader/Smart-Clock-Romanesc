@@ -26,7 +26,7 @@ SmartClock::SmartClock(QObject *parent) : QObject(parent) {
         query = QSqlQuery("INSERT INTO settings(key, value) VALUES ('snooze', '10');");
         query.exec();
 
-        query = QSqlQuery("INSERT INTO settings(key, value) VALUES ('alarmSound', 'ringtone.wav');");
+        query = QSqlQuery("INSERT INTO settings(key, value) VALUES ('alarmSound', 'https://www.kissfm.ro/listen.pls');");
         query.exec();
     }
 

@@ -92,7 +92,7 @@ Pane {
     Button {
         id: cancelNextAlarmButton
 
-        text: "Cancel"
+        text: "Anuleaza alarma"
         highlighted: true
         flat: true
         Material.accent: Material.Blue
@@ -108,11 +108,12 @@ Pane {
 
     Dialog {
         id: settingsDialog
-        title: "Settings"
+        parent: Overlay.overlay
+        title: "Setari"
 
 //        anchors.horizontalCenter: parent.horizontalCenter
-        x: ( window.width - settingsDialog.width ) / 2
-        y: inputPanel.active ? 0 : (window.height - settingsDialog.height) / 2
+        x: ( parent.width - settingsDialog.width ) / 2
+        y: inputPanel.active ? 0 : (parent.height - settingsDialog.height) / 2
 
         Behavior on y {
             NumberAnimation {

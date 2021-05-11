@@ -2,6 +2,8 @@ QT += quick
 QT += virtualkeyboard
 QT += sql
 
+VERSION = 1.0.0
+
 CONFIG += c++11
 
 # You can make your code fail to compile if it uses deprecated APIs.

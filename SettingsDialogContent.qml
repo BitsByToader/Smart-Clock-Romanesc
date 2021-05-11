@@ -7,7 +7,7 @@ import tudor.SmartClock 1.0
 Rectangle {
     color: "transparent"
 
-    implicitHeight: 140
+    implicitHeight: 150
     implicitWidth: 400
 
     property var snoozeTime: SmartClock.settings.snoozeTime
@@ -16,7 +16,7 @@ Rectangle {
     Label {
         id: snoozeTimeLabel
 
-        text: "Snooze time: "
+        text: "Timp amanare: "
         font.italic: true
         font.pixelSize: 15
 
@@ -28,7 +28,7 @@ Rectangle {
         id: snoozeTimeField
         width: 200
 
-        placeholderText: "Snooze minutes"
+        placeholderText: "Minute"
         autoScroll: true
         Material.accent: Material.Blue
         inputMask: "000" // Only allow three numbers from 0 to 9 for the snooze time.
@@ -42,7 +42,7 @@ Rectangle {
     Label {
         id: alarmSoundLabel
 
-        text: "Alarm sound: "
+        text: "Post Radio: "
         font.italic: true
         font.pixelSize: 15
 
@@ -54,7 +54,7 @@ Rectangle {
         id: alarmSoundField
         width: 200
 
-        placeholderText: "Alarm ringtone"
+        placeholderText: "URL"
         autoScroll: true
         Material.accent: Material.Blue
 
@@ -68,7 +68,7 @@ Rectangle {
 
     Button {
         id: saveSettingsButton
-        text: "Save"
+        text: "Salveaza"
 
         Material.accent: Material.color(Material.Blue)
         highlighted: true
@@ -87,7 +87,7 @@ Rectangle {
 
     Button {
         id: closeSettingsDialogButton
-        text: "Close"
+        text: "Anuleaza"
 
         Material.accent: Material.color(Material.Red)
         highlighted: true

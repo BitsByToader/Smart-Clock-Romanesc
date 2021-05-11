@@ -1,6 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Controls.Material 2.15
+import QtMultimedia 5.15
 import tudor.SmartClock 1.0
 
 Rectangle {
@@ -14,11 +15,12 @@ Rectangle {
 
         function onRingAlarmUI() {
             alarmRangDialog.open()
+            alarmRingtone.play()
         }
     }
 
     Text {
-        text: 'Alarma "' + SmartClock.alarms.nextAlarm.alarmName + '" a sunat la ora ' + makeNumbersWithDoubleDigits(SmartClock.alarms.nextAlarm.alarmHour) + ":" + makeNumbersWithDoubleDigits(SmartClock.alarms.nextAlarm.alarmMinutes) + "."
+        text: "Alarma dvs. a sunat."
         color: "white"
         font.italic: true
 
@@ -39,6 +41,7 @@ Rectangle {
         onClicked: {
             SmartClock.alarms.constructNewHeadline()
             alarmRangDialog.close()
+            alarmRingtone.stop()
         }
     }
 
@@ -57,6 +60,12 @@ Rectangle {
         onClicked: {
             SmartClock.alarms.snoozeAlarm()
             alarmRangDialog.close()
+            alarmRingtone.stop()
         }
+    }
+
+    Audio {
+        id: alarmRingtone
+        source: SmartClock.settings.alarmRingtone
     }
 }

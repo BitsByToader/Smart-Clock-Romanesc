@@ -13,7 +13,7 @@ Rectangle {
     Label {
         id: alarmNameLabel
 
-        text: "Alarm name: "
+        text: "Nume alarma: "
         font.italic: true
         font.pixelSize: 15
 
@@ -24,7 +24,7 @@ Rectangle {
     TextField {
         id: alarmNameField
 
-        placeholderText: "Alarm name"
+        placeholderText: "Nume alarma"
         autoScroll: true
         Material.accent: Material.Blue
 
@@ -37,7 +37,7 @@ Rectangle {
     Label {
         id: timePickerLabel
 
-        text: "Time: "
+        text: "Timp: "
         font.italic: true
         font.pixelSize: 15
 
@@ -104,7 +104,7 @@ Rectangle {
     Label {
         id: alarmRepeatsLabel
 
-        text: "Repeats"
+        text: "Se repeta"
         font.italic: true
         font.pixelSize: 15
 
@@ -128,7 +128,7 @@ Rectangle {
 
         visible: alarmRepeatsSwitch.checked
 
-        text: "Days"
+        text: "Zile"
         font.italic: true
         font.pixelSize: 15
 
@@ -182,7 +182,7 @@ Rectangle {
 
     Button {
         id: addAlarmSaveButton
-        text: "Save"
+        text: "Salveaza"
 
         Material.accent: Material.color(Material.Blue)
         highlighted: true
@@ -219,7 +219,7 @@ Rectangle {
     }
 
     Button {
-        text: "Cancel"
+        text: "Anuleaza"
 
         Material.accent: Material.color(Material.Red)
         highlighted: true

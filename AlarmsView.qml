@@ -23,7 +23,7 @@ Pane {
     Label {
         id: alarmsViewTitle
 
-        text: "Alarms"
+        text: "Alarme"
         font.pointSize: 30
         font.bold: true
 
@@ -66,7 +66,7 @@ Pane {
 
     Label {
         id: alarmListPlaceholder
-        text: "Add an alarm with the '+' button."
+        text: "Adaugati o alarma cu butonul '+'."
         opacity: SmartClock.alarms.list.length === 0 ? 100 : 0
 
         anchors.centerIn: parent
@@ -103,7 +103,8 @@ Pane {
 
     Dialog {
         id: addAlarmDialog
-        title: "Add an alarm"
+        parent: Overlay.overlay
+        title: "Adaugati o alarma"
 
         anchors.centerIn: parent
 

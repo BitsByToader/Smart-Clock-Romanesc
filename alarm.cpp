@@ -1,6 +1,6 @@
 #include "alarm.h"
 
-Alarm::Alarm(QObject *parent) {
+Alarm::Alarm(QObject *parent) : QObject(parent) {
 }
 
 Alarm::Alarm(QString alarmName, int alarmHour, int alarmMinutes, QString alarmDays, bool alarmActivated, QObject *parent) : QObject(parent) {
